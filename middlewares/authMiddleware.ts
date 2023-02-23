@@ -25,3 +25,5 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         handleHttpError(res, 500, error.message);
     }
 }
+
+export default authMiddleware;
