@@ -11,15 +11,15 @@ const authController = {
             const username: string = req.body.username
             const password: string = req.body.password
 
-            if (!username || !password) handleHttpError(res, 400, 'Username and password are required');
+            if (!username || !password) throw { message: 'Please provide username and password', code: 400 };
 
             const user = await User.findOne({ username });
 
-            if (!user) handleHttpError(res, 404, 'User not found');
+            if (!user) throw { message: 'User not found', code: 404 };
 
             const isMatch = await comparePassword(password, user.password);
 
-            if (!isMatch) handleHttpError(res, 400, 'Invalid password');
+            if (!isMatch) throw { message: 'Invalid password', code: 401 };
 
             const payload = {
                 _id: user._id,
@@ -36,8 +36,8 @@ const authController = {
                     user,
                 }
             });
-        } catch (error) {
-            handleHttpError(res, 500, error.message);
+        } catch (error: any) {
+            handleHttpError(res, error.code || 500, error.message);
         }
     }
 }
