@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import handleHttpError from '../utils/handleHttpError';
+import { encryptPassword } from '../utils/handlePassword';
 import User from '../models/user';
 
 const userController = {
@@ -11,7 +12,7 @@ const userController = {
                 status: 200,
                 data: users,
             });
-        } catch (error) {
+        } catch (error: any) {
             handleHttpError(res, 500, error.message);
         }
     },
@@ -23,7 +24,7 @@ const userController = {
                 status: 200,
                 data: user,
             });
-        } catch (error) {
+        } catch (error: any) {
             handleHttpError(res, 500, error.message);
         }
     },
@@ -35,7 +36,7 @@ const userController = {
                 status: 200,
                 data: user,
             });
-        } catch (error) {
+        } catch (error: any) {
             handleHttpError(res, 500, error.message);
         }
     },
@@ -43,23 +44,29 @@ const userController = {
 
     createUser: async (req: Request, res: Response) => {
         try {
-            const user = await User.create(req.body);
+            const data = req.body;
+            data.password = await encryptPassword(data.password);
+            const user = await User.create(data);
+
             res.status(201).json({
                 status: 201,
                 data: user,
             });
-        } catch (error) {
+        } catch (error: any) {
             handleHttpError(res, 500, error.message);
         }
     },
 
     updateUser: async (req: Request, res: Response) => {
         try {
-            await User.findByIdAndUpdate(req.params.id, req.body);
+            const data = req.body;
+            data.password = await encryptPassword(data.password);
+
+            await User.findByIdAndUpdate(req.params.id, data);
             res.status(200).json({
                 status: 200,
             });
-        } catch (error) {
+        } catch (error: any) {
             handleHttpError(res, 500, error.message);
         }
     },
@@ -70,7 +77,7 @@ const userController = {
             res.status(200).json({
                 status: 200,
             });
-        } catch (error) {
+        } catch (error: any) {
             handleHttpError(res, 500, error.message);
         }
     }
