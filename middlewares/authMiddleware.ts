@@ -12,17 +12,17 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 
         // Verify token and get payload
 
-        const payload = jwt.verify(token || '', process.env.JWT_SECRET || 'secret');
+        const payload = jwt.verify(token || '', process.env.JWT_SECRET || 'secret') as any;
 
         // check if user exists
-        const user = await User.findById(payload['_id']);
+        const user = await User.findById(payload._id);
 
-        if (!user) handleHttpError(res, 401, 'User not found');
+        if (!user || !user.status) throw { message: 'User not found', code: 404 };
 
         next();
 
-    } catch (error) {
-        handleHttpError(res, 500, error.message);
+    } catch (error: any) {
+        handleHttpError(res, error.code || 500, error.message);
     }
 }
 
