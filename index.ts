@@ -27,7 +27,7 @@ const main = async () => {
     try {
         await connectDB();
         app.listen(PORT, () => {
-            console.log(`Server is running on:  ${HOST}:${PORT}`);
+            console.log(`Server is running on: ${HOST}:${PORT}`);
         });
     } catch (error) {
         console.log(error);
