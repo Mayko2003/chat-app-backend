@@ -11,5 +11,6 @@ router.get('/username/:username', authMiddleware, userController.getUserByUserna
 router.post('/create', userController.createUser)
 router.put('/update/:id', authMiddleware, userController.updateUser)
 router.delete('/inactive/:id', authMiddleware, userController.deleteUser)
+router.get('/active', authMiddleware, userController.getActiveUsers)
 
 export default router
