@@ -80,6 +80,18 @@ const userController = {
         } catch (error: any) {
             handleHttpError(res, 500, error.message);
         }
+    },
+
+    getActiveUsers: async (req: Request, res: Response) => {
+        try {
+            const users = await User.find({ status: true });
+            res.status(200).json({
+                status: 200,
+                data: users,
+            });
+        } catch (error: any) {
+            handleHttpError(res, 500, error.message);
+        }
     }
 };
 
