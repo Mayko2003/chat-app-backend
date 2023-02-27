@@ -19,7 +19,7 @@ const authController = {
 
             const isMatch = await comparePassword(password, user.password);
 
-            if (!isMatch) throw { message: 'Invalid password', code: 401 };
+            if (!isMatch) throw { message: 'Invalid password', code: 400 };
 
             const payload = {
                 _id: user._id,
@@ -33,7 +33,28 @@ const authController = {
                 status: 200,
                 data: {
                     token,
-                    user,
+                    //remove password from response
+                    user: {
+                        ...user._doc,
+                        password: undefined
+                    }
+                }
+            });
+        } catch (error: any) {
+            handleHttpError(res, error.code || 500, error.message);
+        }
+    },
+
+    getLoggedUser: async (req: Request, res: Response) => {
+        try {
+            const loggedUserId = req.body.loggedUserId;
+
+            const user = await User.findOne({ _id: loggedUserId });
+            res.status(200).json({
+                status: 200,
+                data: {
+                    ...user._doc,
+                    password: undefined
                 }
             });
         } catch (error: any) {
