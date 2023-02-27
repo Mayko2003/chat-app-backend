@@ -6,9 +6,9 @@ import User from "../models/user";
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const header = req.headers.authorization;
-        if (!header) handleHttpError(res, 401, 'No token, authorization denied');
-        const token = header?.split(' ')[1];
-        if (!token) handleHttpError(res, 401, 'No token, authorization denied');
+        if (!header) throw { message: 'No token, authorization denied', code: 401 };
+        const token = header?.split(' ')[1] === 'null' ? undefined: header?.split(' ')[1];
+        if (!token) throw { message: 'No token, authorization denied', code: 401 };
 
         // Verify token and get payload
 
