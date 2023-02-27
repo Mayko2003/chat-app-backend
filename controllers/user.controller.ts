@@ -45,15 +45,22 @@ const userController = {
     createUser: async (req: Request, res: Response) => {
         try {
             const data = req.body;
+            let user = await User.findOne({ username: data.username })
+
+            if (user) throw { message: 'User already exists', code: 400 };
+
             data.password = await encryptPassword(data.password);
-            const user = await User.create(data);
+            user = await User.create(data);
 
             res.status(201).json({
                 status: 201,
-                data: user,
+                data: {
+                    ...user._doc,
+                    password: undefined,
+                }
             });
         } catch (error: any) {
-            handleHttpError(res, 500, error.message);
+            handleHttpError(res, error.code || 500, error.message);
         }
     },
 
