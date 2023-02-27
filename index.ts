@@ -13,11 +13,14 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 // app
 const app: Express = express();
 const server = http.createServer(app);
-const io = new Server(server);
-
-io.on('connection', (socket) => {
-    console.log('a user connected');
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:5173",
+        methods: ["GET", "POST"]
+    }
 });
+
+
 
 // middlewares
 app.use(express.json());
@@ -26,6 +29,27 @@ app.use(cors());
 
 // routes
 app.use('/api', routes);
+
+
+// manage socket connections
+
+const clients = new Map();
+
+io.sockets.on('connection', (socket) => {
+
+    socket.on('login', (username) => {
+        clients.set(username, socket.id);
+    });
+
+    socket.on('logout', (username) => {
+        clients.delete(username);
+    });
+});
+
+// server variables
+app.set('io', io);
+app.set('clients', clients);
+
 
 // server
 
