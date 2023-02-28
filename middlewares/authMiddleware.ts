@@ -20,7 +20,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         if (!user || !user.status) throw { message: 'User not found', code: 404 };
 
         // add user to request
-        req.body.loggedUserId = payload._id;
+        req.body.loggedUser = user;
 
         next();
 
