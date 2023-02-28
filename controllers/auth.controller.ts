@@ -47,13 +47,12 @@ const authController = {
 
     getLoggedUser: async (req: Request, res: Response) => {
         try {
-            const loggedUserId = req.body.loggedUserId;
+            const loggedUser = req.body.loggedUser;
 
-            const user = await User.findOne({ _id: loggedUserId });
             res.status(200).json({
                 status: 200,
                 data: {
-                    ...user._doc,
+                    ...loggedUser._doc,
                     password: undefined
                 }
             });
